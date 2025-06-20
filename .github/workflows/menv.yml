@@ -1,0 +1,54 @@
+name: Multi-Environment Deployment
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  development:
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Development Step
+        run: |
+          echo "✅ Development Environment Running"
+          echo "Files:"
+          ls -l
+          cat index.html
+          cat style.css
+          cat script.js
+
+  staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: development
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Staging Step
+        run: |
+          echo "🧪 Staging Environment Running"
+          [ -f index.html ] && echo "Found index.html"
+          [ -f style.css ] && echo "Found style.css"
+          [ -f script.js ] && echo "Found script.js"
+
+  production:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Production Step
+        run: |
+          echo "🚀 Production Environment Running"
+          echo "Deployment simulation complete"
